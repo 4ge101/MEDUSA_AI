@@ -121,6 +121,25 @@ recognition.onresult = function (event) {
         readOut("opening your github profile sir");
         window.open(`https://github.com/${JSON.parse(userdata).github}`);
     }
+
+      // Calculation feature
+    if (transcript.includes("plus") || transcript.includes("minus") || transcript.includes("times") || transcript.includes("divided by")) {
+        let expression = transcript
+            .replace("plus", "+")
+            .replace("minus", "-")
+            .replace("times", "*")
+            .replace("divided by", "/")
+            .replace("what's", "")
+            .replace("what is", "")
+            .trim();
+
+        try {
+            let result = eval(expression);
+            readOut(`The result is ${result}`);
+        } catch (error) {
+            readOut("Sorry, I couldn't calculate that. Please try again.");
+        }
+    }
 };
 
 // SPEECH RECONGNTION STOP
