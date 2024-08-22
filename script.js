@@ -181,3 +181,33 @@ startBtn.addEventListener("click", () => {
 stopBtn.addEventListener("click", () => {
     waveContainer.classList.add("hidden");
 });
+
+// MAKING GHOST SPECH ACTIVE WITHOUT CLICK IN IMG
+
+const wakeWordRecognition = new SpeechRecognition();
+wakeWordRecognition.continuous = true;
+wakeWordRecognition.interimResults = false;
+
+// Start listening for the wake word
+wakeWordRecognition.start();
+
+wakeWordRecognition.onresult = function (event) {
+    let transcript = event.results[event.resultIndex][0].transcript.trim().toLowerCase();
+    console.log(`Wake word detected: ${transcript}`);
+
+    if (transcript.includes("hey ghost") || transcript.includes("hello ghost") || transcript.includes("hi ghost")) {
+        readOut("Hello Sami Sir");
+        wakeWordRecognition.stop(); // Stop wake word recognition
+        recognition.start(); // Start main voice recognition
+    }
+};
+
+startBtn.addEventListener("click", () => {
+    wakeWordRecognition.stop(); // Stop the wake word listener
+    recognition.start(); // Start the main recognition
+});
+
+stopBtn.addEventListener("click", () => {
+    recognition.stop(); // Stop the main recognition
+    wakeWordRecognition.start(); // Restart the wake word listener
+});
