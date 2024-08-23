@@ -184,12 +184,39 @@ stopBtn.addEventListener("click", () => {
 
 // MAKING GHOST SPECH ACTIVE WITHOUT CLICK IN IMG
 
+// Initialize the main recognition and wake word recognition
 const wakeWordRecognition = new SpeechRecognition();
-wakeWordRecognition.continuous = true;
-wakeWordRecognition.interimResults = false;
 
-// Start listening for the wake word
-wakeWordRecognition.start();
+// Set continuous recognition to true for both instances
+recognition.continuous = true;
+wakeWordRecognition.continuous = true;
+
+// Handle wake word recognition restart on end
+wakeWordRecognition.onend = function () {
+    console.log("Wake word recognition ended. Restarting...");
+    // Set a timeout to restart the recognition after a short delay
+    setTimeout(startWakeWordRecognition, 500);
+};
+
+// Handle main recognition restart on end
+recognition.onend = function () {
+    console.log("Main recognition stopped.");
+    waveContainer.classList.add("hidden"); // Hide the wave animation
+    setTimeout(startWakeWordRecognition, 500); // Restart wake word detection
+};
+
+// Function to start wake word recognition
+function startWakeWordRecognition() {
+    wakeWordRecognition.start();
+    console.log("Wake word recognition started.");
+}
+
+// Function to stop wake word recognition
+function stopWakeWordRecognition() {
+    wakeWordRecognition.stop();
+    console.log("Wake word recognition stopped.");
+    clearTimeout(wakeWordTimeout); // Clear any existing timeout
+}
 
 wakeWordRecognition.onresult = function (event) {
     let transcript = event.results[event.resultIndex][0].transcript.trim().toLowerCase();
@@ -197,17 +224,23 @@ wakeWordRecognition.onresult = function (event) {
 
     if (transcript.includes("hey ghost") || transcript.includes("hello ghost") || transcript.includes("hi ghost")) {
         readOut("Hello Sami Sir");
-        wakeWordRecognition.stop(); // Stop wake word recognition
+        stopWakeWordRecognition(); // Stop wake word recognition
         recognition.start(); // Start main voice recognition
     }
 };
 
+// Start and stop the voice recognition with the image click
 startBtn.addEventListener("click", () => {
-    wakeWordRecognition.stop(); // Stop the wake word listener
+    stopWakeWordRecognition(); // Stop the wake word listener
     recognition.start(); // Start the main recognition
+    waveContainer.classList.remove("hidden"); // Show the wave animation
 });
 
 stopBtn.addEventListener("click", () => {
     recognition.stop(); // Stop the main recognition
-    wakeWordRecognition.start(); // Restart the wake word listener
+    startWakeWordRecognition(); // Restart the wake word listener
+    waveContainer.classList.add("hidden"); // Hide the wave animation
 });
+
+// Start wake word recognition on page load
+startWakeWordRecognition();
