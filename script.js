@@ -201,7 +201,33 @@ function fetchLocation() {
         });
 }
 
+// Function to fetch the user's current location
+function fetchLocation() {
+    const url = "https://ipapi.co/json/";
+
+    fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+            if (data && data.country_name) {
+                const country = data.country_name;
+                console.log(`You are in ${country}`);
+                readOut(`You are currently in ${country}`);
+            } else {
+                console.error("Error: Could not retrieve country name from API response.");
+                readOut("Sorry, I couldn't fetch your location.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error fetching location:", error);
+            readOut("Sorry, I couldn't fetch your location.");
+        });
+}
+recognition.onresult = function (event) {
+    let transcript = event.results[0][0].transcript.toLowerCase();
+    
     // Check if the user asks for their current location
     if (transcript.includes("what is my current location") || transcript.includes("where am i")) {
+        console.log("Fetching location..."); // Debugging log
         fetchLocation(); // Call the function to get the location
     }
+};
