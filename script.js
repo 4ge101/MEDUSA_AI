@@ -121,35 +121,7 @@ recognition.onresult = function (event) {
         readOut("opening your github profile sir");
         window.open(`https://github.com/${JSON.parse(userdata).github}`);
     }
-
-       // Calculator functionality
-       if (transcript.match(/\d+/) && (transcript.includes("plus") || transcript.includes("minus") || transcript.includes("multiplied by") || transcript.includes("divided by"))) {
-        calculate(transcript);
-    }
 };
-
-// Calculation function
-function calculate(transcript) {
-    let numberPattern = /\d+/g; // Extract numbers
-    let numbers = transcript.match(numberPattern).map(Number); // Convert to numbers
-    let result;
-
-    if (transcript.includes("plus")) {
-        result = numbers[0] + numbers[1];
-    } else if (transcript.includes("minus")) {
-        result = numbers[0] - numbers[1];
-    } else if (transcript.includes("multiplied by")) {
-        result = numbers[0] * numbers[1];
-    } else if (transcript.includes("divided by")) {
-        result = numbers[0] / numbers[1];
-    }
-
-    if (result !== undefined) {
-        readOut(`The result is ${result}`);
-    } else {
-        readOut("Sorry, I couldn't calculate that.");
-    }
-}
 
 // SPEECH RECONGNTION STOP
 
@@ -208,3 +180,28 @@ recognition.onend = function () {
     isRecognitionActive = false;
     waveContainer.classList.add("hidden"); // Hide the wave animation
 };
+
+
+
+
+
+// Function to fetch the user's current location
+function fetchLocation() {
+    const url = "https://ipapi.co/json/";
+
+    fetch(url)
+        .then((response) => response.json())
+        .then((data) => {
+            const country = data.country_name;
+            readOut(`You are currently in ${country}`);
+        })
+        .catch((error) => {
+            console.error("Error fetching location:", error);
+            readOut("Sorry, I couldn't fetch your location.");
+        });
+}
+
+    // Check if the user asks for their current location
+    if (transcript.includes("what is my current location") || transcript.includes("where am i")) {
+        fetchLocation(); // Call the function to get the location
+    }
