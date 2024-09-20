@@ -121,7 +121,35 @@ recognition.onresult = function (event) {
         readOut("opening your github profile sir");
         window.open(`https://github.com/${JSON.parse(userdata).github}`);
     }
+
+       // Calculator functionality
+       if (transcript.match(/\d+/) && (transcript.includes("plus") || transcript.includes("minus") || transcript.includes("multiplied by") || transcript.includes("divided by"))) {
+        calculate(transcript);
+    }
 };
+
+// Calculation function
+function calculate(transcript) {
+    let numberPattern = /\d+/g; // Extract numbers
+    let numbers = transcript.match(numberPattern).map(Number); // Convert to numbers
+    let result;
+
+    if (transcript.includes("plus")) {
+        result = numbers[0] + numbers[1];
+    } else if (transcript.includes("minus")) {
+        result = numbers[0] - numbers[1];
+    } else if (transcript.includes("multiplied by")) {
+        result = numbers[0] * numbers[1];
+    } else if (transcript.includes("divided by")) {
+        result = numbers[0] / numbers[1];
+    }
+
+    if (result !== undefined) {
+        readOut(`The result is ${result}`);
+    } else {
+        readOut("Sorry, I couldn't calculate that.");
+    }
+}
 
 // SPEECH RECONGNTION STOP
 
@@ -158,56 +186,25 @@ function readOut(message) {
 // });
 
 
-// Select the wave container
+// ELEMENTS
 const waveContainer = document.querySelector(".wave-container");
 
-// SPEECH RECOGNITION START
+let isRecognitionActive = false; // Track recognition state
+
+startBtn.addEventListener("click", () => {
+    if (isRecognitionActive) {
+        recognition.stop(); // Stop recognition if it's active
+    } else {
+        recognition.start(); // Start recognition if it's not active
+    }
+});
+
 recognition.onstart = function () {
-    console.log("vr active");
+    isRecognitionActive = true;
     waveContainer.classList.remove("hidden"); // Show the wave animation
 };
 
-// SPEECH RECOGNITION STOP
 recognition.onend = function () {
-    console.log("vr deactive");
+    isRecognitionActive = false;
     waveContainer.classList.add("hidden"); // Hide the wave animation
 };
-
-// Start and stop the voice recognition with the image click
-startBtn.addEventListener("click", () => {
-    waveContainer.classList.remove("hidden");
-});
-
-stopBtn.addEventListener("click", () => {
-    waveContainer.classList.add("hidden");
-});
-
-// MAKING GHOST SPECH ACTIVE WITHOUT CLICK IN IMG
-
-const wakeWordRecognition = new SpeechRecognition();
-wakeWordRecognition.continuous = true;
-wakeWordRecognition.interimResults = false;
-
-// Start listening for the wake word
-wakeWordRecognition.start();
-
-wakeWordRecognition.onresult = function (event) {
-    let transcript = event.results[event.resultIndex][0].transcript.trim().toLowerCase();
-    console.log(`Wake word detected: ${transcript}`);
-
-    if (transcript.includes("hey ghost") || transcript.includes("hello ghost") || transcript.includes("hi ghost")) {
-        readOut("Hello Sami Sir");
-        wakeWordRecognition.stop(); // Stop wake word recognition
-        recognition.start(); // Start main voice recognition
-    }
-};
-
-startBtn.addEventListener("click", () => {
-    wakeWordRecognition.stop(); // Stop the wake word listener
-    recognition.start(); // Start the main recognition
-});
-
-stopBtn.addEventListener("click", () => {
-    recognition.stop(); // Stop the main recognition
-    wakeWordRecognition.start(); // Restart the wake word listener
-});
