@@ -186,22 +186,16 @@ recognition.onend = function () {
 
 
 // Function to fetch the user's current location
+// Function to fetch the user's current location using Geolocation API
 function fetchLocation() {
-    const url = "https://ipapi.co/json/";
-
-    fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-            const country = data.country_name;
-            readOut(`You are currently in ${country}`);
-        })
-        .catch((error) => {
-            console.error("Error fetching location:", error);
-            readOut("Sorry, I couldn't fetch your location.");
-        });
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        readOut("Geolocation is not supported by this browser.");
+    }
 }
 
-// Function to fetch the user's current location
+// Function to show position and fetch city name
 function showPosition(position) {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
@@ -210,23 +204,43 @@ function showPosition(position) {
     fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
         .then(response => response.json())
         .then(data => {
-            const location = data.address.city || data.address.town || data.address.village;
-            const country = data.address.country;
-            readOut(`You are currently in ${location}, ${country}`);
+            const city = data.address.city || data.address.town || data.address.village || "your location";
+            const country = data.address.country || "unknown country";
+            readOut(`You are currently in ${city}, ${country}.`);
         })
         .catch(error => {
             console.error("Error fetching location:", error);
-            readOut("Sorry, I couldn't retrieve your location.");
+            readOut("Sorry, I couldn't fetch your location.");
         });
 }
 
+// Function to handle errors from Geolocation API
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            readOut("User denied the request for Geolocation.");
+            break;
+        case error.POSITION_UNAVAILABLE:
+            readOut("Location information is unavailable.");
+            break;
+        case error.TIMEOUT:
+            readOut("The request to get user location timed out.");
+            break;
+        case error.UNKNOWN_ERROR:
+            readOut("An unknown error occurred.");
+            break;
+    }
+}
 
+// Speech recognition result handling
 recognition.onresult = function (event) {
     let transcript = event.results[0][0].transcript.toLowerCase();
     
     // Check if the user asks for their current location
-    if (transcript.includes("what is my current location") || transcript.includes("where am i")) {
+    if (transcript.includes("what is my current location") || transcript.includes("where am i") || transcript.includes("tell my current location")) {
         console.log("Fetching location..."); // Debugging log
         fetchLocation(); // Call the function to get the location
     }
+
+    // Add other commands here as needed...
 };
