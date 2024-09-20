@@ -202,26 +202,25 @@ function fetchLocation() {
 }
 
 // Function to fetch the user's current location
-function fetchLocation() {
-    const url = "https://ipapi.co/json/";
+function showPosition(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
 
-    fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-            if (data && data.country_name) {
-                const country = data.country_name;
-                console.log(`You are in ${country}`);
-                readOut(`You are currently in ${country}`);
-            } else {
-                console.error("Error: Could not retrieve country name from API response.");
-                readOut("Sorry, I couldn't fetch your location.");
-            }
+    // Reverse geocoding using OpenStreetMap Nominatim API
+    fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`)
+        .then(response => response.json())
+        .then(data => {
+            const location = data.address.city || data.address.town || data.address.village;
+            const country = data.address.country;
+            readOut(`You are currently in ${location}, ${country}`);
         })
-        .catch((error) => {
+        .catch(error => {
             console.error("Error fetching location:", error);
-            readOut("Sorry, I couldn't fetch your location.");
+            readOut("Sorry, I couldn't retrieve your location.");
         });
 }
+
+
 recognition.onresult = function (event) {
     let transcript = event.results[0][0].transcript.toLowerCase();
     
