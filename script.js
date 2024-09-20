@@ -206,7 +206,7 @@ function showPosition(position) {
         .then(data => {
             const city = data.address.city || data.address.town || data.address.village || "your location";
             const country = data.address.country || "unknown country";
-            readOut(`You are currently in ${city}, ${country}.`);
+            readOut(`City "${city}", Country "${country}".`);
         })
         .catch(error => {
             console.error("Error fetching location:", error);
