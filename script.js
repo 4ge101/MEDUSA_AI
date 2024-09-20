@@ -181,11 +181,8 @@ recognition.onend = function () {
     waveContainer.classList.add("hidden"); // Hide the wave animation
 };
 
+// STARTING TO MAKE CURRENT LOCATION 
 
-
-
-
-// Function to fetch the user's current location
 // Function to fetch the user's current location using Geolocation API
 function fetchLocation() {
     if (navigator.geolocation) {
@@ -206,7 +203,7 @@ function showPosition(position) {
         .then(data => {
             const city = data.address.city || data.address.town || data.address.village || "your location";
             const country = data.address.country || "unknown country";
-            readOut(`City "${city}", Country "${country}".`);
+            readOut(`Country "${country}, "City "${city}".`);
         })
         .catch(error => {
             console.error("Error fetching location:", error);
@@ -216,7 +213,7 @@ function showPosition(position) {
 
 // Function to handle errors from Geolocation API
 function showError(error) {
-    switch(error.code) {
+    switch (error.code) {
         case error.PERMISSION_DENIED:
             readOut("User denied the request for Geolocation.");
             break;
@@ -235,7 +232,7 @@ function showError(error) {
 // Speech recognition result handling
 recognition.onresult = function (event) {
     let transcript = event.results[0][0].transcript.toLowerCase();
-    
+
     // Check if the user asks for their current location
     if (transcript.includes("what is my current location") || transcript.includes("where am i") || transcript.includes("tell my current location")) {
         console.log("Fetching location..."); // Debugging log
