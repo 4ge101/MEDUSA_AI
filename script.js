@@ -238,6 +238,4 @@ recognition.onresult = function (event) {
         console.log("Fetching location..."); // Debugging log
         fetchLocation(); // Call the function to get the location
     }
-
-    // Add other commands here as needed...
 };
