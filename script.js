@@ -22,9 +22,9 @@ recognition.onresult = function (event) {
     console.log(`Transcript: ${transcript}`);
 
     // Handle mathematical operations
-    if (transcript.includes("what is") && (transcript.includes("plus") ||
-        transcript.includes("minus") || transcript.includes("times") ||
-        transcript.includes("divided by"))) {
+    if (transcript.includes("what is") && (transcript.includes(" plus ") ||
+        transcript.includes(" minus ") || transcript.includes(" times ") ||
+        transcript.includes(" divided by "))) {
         handleMathOperation(transcript);
     } else if (transcript.includes("hello ghost") || transcript.includes("hey ghost") || transcript.includes("hi ghost")) {
         readOut("Hello, how can I assist you?");
@@ -82,23 +82,23 @@ function handleMathOperation(transcript) {
     let equation = transcript.replace("what is", "").trim();
     let result;
 
-    if (equation.includes("plus")) {
-        let nums = equation.split("plus");
+    if (equation.includes(" plus ")) {
+        let nums = equation.split(" plus ");
         let num1 = parseFloat(nums[0]);
         let num2 = parseFloat(nums[1]);
         result = num1 + num2;
-    } else if (equation.includes("minus")) {
-        let nums = equation.split("minus");
+    } else if (equation.includes(" minus ")) {
+        let nums = equation.split(" minus ");
         let num1 = parseFloat(nums[0]);
         let num2 = parseFloat(nums[1]);
         result = num1 - num2;
-    } else if (equation.includes("times")) {
-        let nums = equation.split("times");
+    } else if (equation.includes(" times ")) {
+        let nums = equation.split(" times ");
         let num1 = parseFloat(nums[0]);
         let num2 = parseFloat(nums[1]);
         result = num1 * num2;
-    } else if (equation.includes("divided by")) {
-        let nums = equation.split("divided by");
+    } else if (equation.includes(" divided by ")) {
+        let nums = equation.split(" divided by ");
         let num1 = parseFloat(nums[0]);
         let num2 = parseFloat(nums[1]);
         result = num1 / num2;
