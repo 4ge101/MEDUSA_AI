@@ -102,7 +102,7 @@ recognition.onresult = function (event) {
     }
 
     //google search
-    if (transcript.includes("search for") || transcript.includes("search")) {
+    if (transcript.includes("search for") || transcript.includes("search") || transcript.includes("find")) {
         readOut("here's the result");
 
         let input = transcript.slice(11);
